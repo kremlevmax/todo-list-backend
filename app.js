@@ -2,7 +2,7 @@ const config = require("./utils/config");
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const todosRouter = require("./controller/todos");
+const todoRouter = require("./controller/todo");
 const logger = require("./utils/logger");
 const mongoose = require("mongoose");
 const middleware = require("./utils/middleware");
@@ -23,7 +23,7 @@ app.use(cors());
 
 app.use(express.json());
 app.use(middleware.requestLogger);
-app.use("/api/todos", todosRouter);
+app.use("/api/todos", todoRouter);
 app.use(middleware.errorHandler);
 app.use(middleware.unknownEndpoint);
 

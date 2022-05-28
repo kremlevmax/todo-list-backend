@@ -10,9 +10,14 @@ Content-Type: application/json
 POST http://localhost:3001/api/todos/reset
 
 ###
-PUT http://localhost:3001/api/todos/6270f316eecd4443de5f09de
-Content-Type: application/json
+DELETE http://localhost:3001/api/todos/6290a04cbfd8835c28d356d6
 
-{
-    "status": false
-}
+
+
+###
+GET http://localhost:3001/api/todos/
+# Content-Type: application/json
+
+# {
+#     "status": false
+# }

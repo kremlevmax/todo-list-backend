@@ -1,20 +1,30 @@
-const todosRouter = require("express").Router();
+const todoRouter = require("express").Router();
 const Todo = require("../models/todo");
 
-todosRouter.get("/", async (request, response) => {
+todoRouter.get("/", async (request, response) => {
   const todos = await Todo.find({});
-  response.json(todos);
+  response.json(todos).end();
 });
 
-todosRouter.get("/:id", async (request, response) => {
+todoRouter.get("/:id", async (request, response) => {
   const id = request.params.id;
   const todo = await Todo.findById(id);
   response.json(todo);
 });
 
-todosRouter.put("/:id", async (request, response) => {
+todoRouter.delete("/:id", async (request, response, next) => {
   const id = request.params.id;
-  console.log("doneToDo");
+
+  try {
+    await Todo.findByIdAndRemove(id);
+    response.status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+todoRouter.put("/:id", async (request, response) => {
+  const id = request.params.id;
 
   try {
     const doneToDo = await Todo.findByIdAndUpdate(
@@ -24,16 +34,14 @@ todosRouter.put("/:id", async (request, response) => {
         new: true,
       }
     );
-    console.log(doneToDo);
     return response.json(doneToDo);
   } catch (error) {
     console.log(error);
   }
 });
 
-todosRouter.post("/", async (request, response, next) => {
+todoRouter.post("/", async (request, response, next) => {
   const todoData = request.body;
-
   const todo = new Todo({
     content: todoData.content,
     status: false,
@@ -47,10 +55,10 @@ todosRouter.post("/", async (request, response, next) => {
   }
 });
 
-todosRouter.post("/reset", async (request, response, next) => {
+todoRouter.post("/reset", async (request, response, next) => {
   await Todo.deleteMany({});
   response.status(200);
 });
 
-module.exports = todosRouter;
+module.exports = todoRouter;
 //1
