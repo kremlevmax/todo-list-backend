@@ -1,6 +1,7 @@
 const todoRouter = require("express").Router();
 const Todo = require("../models/todo");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 
 const getTokenFrom = (request) => {
   const authorization = request.get("authorization");
@@ -38,7 +39,7 @@ todoRouter.post("/", async (request, response, next) => {
   const user = await User.findById(decodedToken.id);
 
   const todo = new Todo({
-    content: todoData.content,
+    content: body.content,
     status: false,
     user: user._id,
   });
