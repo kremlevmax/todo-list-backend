@@ -1,15 +1,18 @@
 const todoRouter = require("express").Router();
 const Todo = require("../models/todo");
+const User = require("../models/user");
+
+const getTokenFrom = (request) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+    return authorization.substring(7);
+  }
+  return null;
+};
 
 todoRouter.get("/", async (request, response) => {
   const todos = await Todo.find({});
   response.json(todos).end();
-});
-
-todoRouter.get("/:id", async (request, response) => {
-  const id = request.params.id;
-  const todo = await Todo.findById(id);
-  response.json(todo);
 });
 
 todoRouter.delete("/:id", async (request, response, next) => {
@@ -23,28 +26,21 @@ todoRouter.delete("/:id", async (request, response, next) => {
   }
 });
 
-todoRouter.put("/:id", async (request, response) => {
-  const id = request.params.id;
-
-  try {
-    const doneToDo = await Todo.findByIdAndUpdate(
-      id,
-      { status: request.body.status },
-      {
-        new: true,
-      }
-    );
-    return response.json(doneToDo);
-  } catch (error) {
-    console.log(error);
-  }
-});
-
 todoRouter.post("/", async (request, response, next) => {
-  const todoData = request.body;
+  const body = request.body;
+
+  const token = getTokenFrom(request);
+
+  const decodedToken = jwt.verify(token, process.env.SECRET);
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: "token missing or invalid" });
+  }
+  const user = await User.findById(decodedToken.id);
+
   const todo = new Todo({
     content: todoData.content,
     status: false,
+    user: user._id,
   });
 
   try {

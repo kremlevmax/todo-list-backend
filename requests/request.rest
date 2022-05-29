@@ -21,3 +21,6 @@ GET http://localhost:3001/api/todos/
 # {
 #     "status": false
 # }
+
+###
+GET http://localhost:3001/api/users/
