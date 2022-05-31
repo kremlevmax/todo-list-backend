@@ -9,9 +9,9 @@ userRouter.get("/", async (request, response) => {
 });
 
 userRouter.post("/", async (request, response) => {
-  const { username, name, password } = request.body;
+  const { email, name, password } = request.body;
 
-  const existingUser = await User.findOne({ username });
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
     return response.status(400).json({
       error: "username must be unique",
@@ -22,7 +22,7 @@ userRouter.post("/", async (request, response) => {
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
   const user = new User({
-    username,
+    email,
     name,
     passwordHash,
   });
